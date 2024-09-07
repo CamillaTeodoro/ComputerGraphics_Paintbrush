@@ -64,12 +64,33 @@ export class Paintbrush {
     );
 
     const index = toIndex(point, imageData.width);
+    console.log("index: ", index);
     const colors = getRGB(this.color);
 
     imageData.data[index + 0] = colors[0]; // red
     imageData.data[index + 1] = colors[1]; // green
     imageData.data[index + 2] = colors[2]; // blue
     imageData.data[index + 3] = 255; // transparency
+
+    this.ctx.putImageData(imageData, 0, 0);
+  }
+
+  cleanScreen() {
+    const imageData = this.ctx.getImageData(
+      0,
+      0,
+      this.canvas.width,
+      this.canvas.height
+    );
+
+    const colors = getRGB("#FFFFFF");
+    for (let index = 0; index < imageData.data.length; index += 4) {
+      //console.log(index);
+      imageData.data[index + 0] = colors[0]; // red
+      imageData.data[index + 1] = colors[1]; // green
+      imageData.data[index + 2] = colors[2]; // blue
+      imageData.data[index + 3] = 255; // transparency
+    }
 
     this.ctx.putImageData(imageData, 0, 0);
   }

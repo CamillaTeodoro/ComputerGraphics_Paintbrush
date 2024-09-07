@@ -6,6 +6,9 @@ function main() {
   const form = document.querySelector("form");
   if (!form) return;
 
+  const cleanScreen = document.querySelector("#cleanScreen");
+  if (!cleanScreen) return;
+
   const paint = new Paintbrush(canvas);
 
   form.addEventListener("change", () => {
@@ -13,6 +16,10 @@ function main() {
     paint.setMode(mode);
     const color = new FormData(form).get("color");
     paint.setColor(color);
+  });
+
+  cleanScreen.addEventListener("click", () => {
+    paint.cleanScreen();
   });
 }
 main();
