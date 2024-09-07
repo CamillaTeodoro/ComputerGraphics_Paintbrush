@@ -9,13 +9,18 @@
   <body>
     <form>
       <fieldset>
-        <legend>Select the mode:</legend>
         <div>
-          <input type="radio" id="line" name="mode" value="line" checked />
-          <label for="line">line</label>
+          <input type="color" id="color" name="color" value="#000000" />
+          <label for="color">Cor</label>
         </div>
+        <legend>Selecione a ferramenta:</legend>
+        <div>
+          <input type="radio" id="point" name="mode" value="point" checked />
+          <label for="point">Ponto</label>
+        </div>
+      </fieldset>
     </form>
-    <canvas width="500" height="500"></canvas>
+    <canvas></canvas>
     <script src="src/main.js" type="module"></script>
   </body>
 </html>
