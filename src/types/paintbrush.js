@@ -15,6 +15,7 @@ export class Paintbrush {
     this.canvas.height = 100;
     this.mode = "point";
     this.color = "#000000";
+    this.elements = [];
     //this.currentPosition = new Point(0, 0);
     this.canvas.addEventListener("click", this.click.bind(this));
   }
@@ -27,20 +28,46 @@ export class Paintbrush {
     const convertedPoint = this.convertPosition(event.offsetX, event.offsetY);
     switch (this.mode) {
       case "point":
-        this.setPixel(convertedPoint);
+        this.elements.push(convertedPoint);
+        this.render();
         break;
-
+      case "line":
+        this.line();
+        break;
       default:
         break;
     }
   }
 
+  line() {
+    const alg = prompt("Digite 1 para DDA ou 2 para Bresenham: ");
+    switch (alg) {
+      case "1":
+        console.log("DDA");
+        break;
+      case "2":
+        console.log("Bresenham");
+        break;
+
+      default:
+        console.log("Opção inválida!");
+        break;
+    }
+  }
   setMode(mode) {
     this.mode = mode;
   }
 
   setColor(color) {
     this.color = color;
+  }
+
+  render() {
+    for (const element of this.elements) {
+      if (element instanceof Point) {
+        this.setPixel(element);
+      }
+    }
   }
 
   convertPosition(x, y) {
@@ -52,7 +79,7 @@ export class Paintbrush {
     const xCanvas = Math.floor((canvasWidth * x) / canvasScreenWidth);
     const yCanvas = Math.floor((canvasHeight * y) / canvasScreenHeight);
 
-    return new Point(xCanvas, yCanvas);
+    return new Point(xCanvas, yCanvas, this.color);
   }
 
   setPixel(point) {
@@ -64,8 +91,7 @@ export class Paintbrush {
     );
 
     const index = toIndex(point, imageData.width);
-    console.log("index: ", index);
-    const colors = getRGB(this.color);
+    const colors = getRGB(point.color);
 
     imageData.data[index + 0] = colors[0]; // red
     imageData.data[index + 1] = colors[1]; // green
@@ -91,7 +117,7 @@ export class Paintbrush {
       imageData.data[index + 2] = colors[2]; // blue
       imageData.data[index + 3] = 255; // transparency
     }
-
+    this.elements.length = 0;
     this.ctx.putImageData(imageData, 0, 0);
   }
 }
