@@ -1,5 +1,6 @@
 import { getRGB, toIndex } from "../functions.js";
 import { Point } from "./point.js";
+import { Polygon } from "./polygon.js";
 
 export class Paintbrush {
   /**
@@ -8,7 +9,9 @@ export class Paintbrush {
    */
   constructor(canvas) {
     this.canvas = canvas;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", {
+      willReadFrequently: true,
+    });
     if (!ctx) throw new Error("Missing context");
     this.ctx = ctx;
     this.canvas.width = 100;
@@ -16,6 +19,7 @@ export class Paintbrush {
     this.mode = "point";
     this.color = "#000000";
     this.elements = [];
+    this.clicksPerMode = 0;
     //this.currentPosition = new Point(0, 0);
     this.canvas.addEventListener("click", this.click.bind(this));
   }
@@ -26,35 +30,51 @@ export class Paintbrush {
    */
   click(event) {
     const convertedPoint = this.convertPosition(event.offsetX, event.offsetY);
+    this.clicksPerMode++;
     switch (this.mode) {
       case "point":
         this.elements.push(convertedPoint);
         this.render();
         break;
       case "line":
-        this.line();
+        this.line(convertedPoint);
         break;
       default:
         break;
     }
   }
 
-  line() {
+  getAlg() {
     const alg = prompt("Digite 1 para DDA ou 2 para Bresenham: ");
     switch (alg) {
       case "1":
-        console.log("DDA");
-        break;
+        return "DDA";
+
       case "2":
-        console.log("Bresenham");
-        break;
+        return "Bresenham";
 
       default:
-        console.log("Opção inválida!");
-        break;
+        alert("Opção inválida!");
+        return "Bresenham";
+    }
+  }
+
+  line(point) {
+    if (this.clicksPerMode === 1) {
+      const alg = this.getAlg();
+      const line = new Polygon(alg, this.color);
+      line.addVertex(point);
+      this.elements.push(line);
+    }
+    if (this.clicksPerMode === 2) {
+      const line = this.elements.at(-1);
+      line.addVertex(point);
+      this.clicksPerMode = 0;
+      this.render();
     }
   }
   setMode(mode) {
+    if (mode != this.mode) this.clicksPerMode = 0;
     this.mode = mode;
   }
 
@@ -66,6 +86,18 @@ export class Paintbrush {
     for (const element of this.elements) {
       if (element instanceof Point) {
         this.setPixel(element);
+      }
+      if (element instanceof Polygon) {
+        for (let i = 0; i < element.vertices.length; i++) {
+          const p1 = element.vertices[i];
+          const p2 = element.vertices[(i + 1) % element.vertices.length];
+          if (element.alg === "DDA") {
+            this.dda(p1, p2, element.color);
+          } else if (element.alg === "Bresenham") {
+          } else {
+            alert("Algoritmo inválido!");
+          }
+        }
       }
     }
   }
@@ -119,5 +151,28 @@ export class Paintbrush {
     }
     this.elements.length = 0;
     this.ctx.putImageData(imageData, 0, 0);
+  }
+
+  dda(initialPoint, finalPoint, color) {
+    const dx = finalPoint.x - initialPoint.x;
+    const dy = finalPoint.y - initialPoint.y;
+    let steps = 0;
+    let x = initialPoint.x;
+    let y = initialPoint.y;
+    let xIncr = 0.0;
+    let yIncr = 0.0;
+    if (Math.abs(dx) > Math.abs(dy)) {
+      steps = Math.abs(dx);
+    } else {
+      steps = Math.abs(dy);
+    }
+    xIncr = dx / steps;
+    yIncr = dy / steps;
+    this.setPixel(initialPoint);
+    for (let i = 1; i <= steps; i++) {
+      x += xIncr;
+      y += yIncr;
+      this.setPixel(new Point(Math.round(x), Math.round(y), color));
+    }
   }
 }

@@ -1,9 +1,11 @@
 export class Polygon {
-  constructor() {
+  constructor(alg, color) {
     this.vertices = [];
+    this.alg = alg;
+    this.color = color;
   }
 
-  addVertice(point) {
+  addVertex(point) {
     this.vertices.push(point);
   }
 }
