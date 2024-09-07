@@ -20,6 +20,8 @@ export class Paintbrush {
     this.color = "#000000";
     this.elements = [];
     this.clicksPerMode = 0;
+    this.alg = "DDA";
+    this.polygonSize = 3;
     //this.currentPosition = new Point(0, 0);
     this.canvas.addEventListener("click", this.click.bind(this));
   }
@@ -38,6 +40,9 @@ export class Paintbrush {
         break;
       case "line":
         this.line(convertedPoint);
+        break;
+      case "polygon":
+        this.polygon(convertedPoint);
         break;
       default:
         break;
@@ -61,14 +66,27 @@ export class Paintbrush {
 
   line(point) {
     if (this.clicksPerMode === 1) {
-      const alg = this.getAlg();
-      const line = new Polygon(alg, this.color);
+      const line = new Polygon(this.alg, this.color);
       line.addVertex(point);
       this.elements.push(line);
     }
     if (this.clicksPerMode === 2) {
-      const line = this.elements.at(-1);
+      const line = this.elements[this.elements.length - 1];
       line.addVertex(point);
+      this.clicksPerMode = 0;
+      this.render();
+    }
+  }
+  polygon(point) {
+    if (this.clicksPerMode === 1) {
+      const polygon = new Polygon(this.alg, this.color);
+      polygon.addVertex(point);
+      this.elements.push(polygon);
+      return;
+    }
+    const polygon = this.elements[this.elements.length - 1];
+    polygon.addVertex(point);
+    if (this.clicksPerMode === this.polygonSize) {
       this.clicksPerMode = 0;
       this.render();
     }
@@ -76,6 +94,23 @@ export class Paintbrush {
   setMode(mode) {
     if (mode != this.mode) this.clicksPerMode = 0;
     this.mode = mode;
+    switch (this.mode) {
+      case "line":
+        this.alg = this.getAlg();
+        break;
+      case "polygon":
+        const size = prompt("Digite o número de lados do polígono: ");
+        if (!size) {
+          alert("Erro!");
+          return;
+        }
+        this.polygonSize = parseInt(size);
+        this.alg = this.getAlg();
+        break;
+
+      default:
+        break;
+    }
   }
 
   setColor(color) {
