@@ -138,6 +138,23 @@ export class Paintbrush {
         }
         this.translate(xTranslation, yTranslation);
         break;
+      case "scale":
+        const xScale = parseFloat(
+          prompt(
+            "Digite o valor para escala em X. Valor maior que 1 aumenta e entre 0 e 1 diminui."
+          ) ?? "0"
+        );
+        const yScale = parseFloat(
+          prompt(
+            "Digite o valor para escala em Y. Valor maior que 1 aumenta e entre 0 e 1 diminui."
+          ) ?? "0"
+        );
+        if (isNaN(xScale) || isNaN(yScale) || xScale < 0 || yScale < 0) {
+          alert("Erro!");
+          return;
+        }
+        this.escale(xScale, yScale);
+        break;
 
       default:
         break;
@@ -327,6 +344,27 @@ export class Paintbrush {
       if (element instanceof Circumference) {
         element.center.x += xTranslation;
         element.center.y += yTranslation;
+      }
+    }
+    this.render();
+  }
+  escale(xScale, yScale) {
+    this.resetCanvas();
+    for (const element of this.elements) {
+      if (element instanceof Point) {
+        element.x = Math.floor(element.x * xScale);
+        element.y = Math.floor(element.y * yScale);
+      }
+      if (element instanceof Polygon) {
+        for (const vertex of element.vertices) {
+          vertex.x = Math.floor(vertex.x * xScale);
+          vertex.y = Math.floor(vertex.y * yScale);
+        }
+      }
+      if (element instanceof Circumference) {
+        element.center.x = Math.floor(element.center.x * xScale);
+        element.center.y = Math.floor(element.center.y * yScale);
+        element.raio = Math.floor(element.raio * xScale);
       }
     }
     this.render();
