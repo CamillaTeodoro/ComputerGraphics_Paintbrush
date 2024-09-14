@@ -60,7 +60,7 @@ export class Paintbrush {
 
       default:
         alert("Opção inválida!");
-        return "Bresenham";
+        return "DDA";
     }
   }
 
@@ -129,6 +129,7 @@ export class Paintbrush {
           if (element.alg === "DDA") {
             this.dda(p1, p2, element.color);
           } else if (element.alg === "Bresenham") {
+            this.bresenham(p1, p2, element.color);
           } else {
             alert("Algoritmo inválido!");
           }
@@ -208,6 +209,58 @@ export class Paintbrush {
       x += xIncr;
       y += yIncr;
       this.setPixel(new Point(Math.round(x), Math.round(y), color));
+    }
+  }
+
+  bresenham(initialPoint, finalPoint, color) {
+    let dx = finalPoint.x - initialPoint.x;
+    let dy = finalPoint.y - initialPoint.y;
+    let xIncr, yIncr, x, y, p, const1, const2;
+
+    if (dx >= 0) {
+      xIncr = 1;
+    } else {
+      xIncr = -1;
+      dx = -dx;
+    }
+    if (dy >= 0) {
+      yIncr = 1;
+    } else {
+      yIncr = -1;
+      dy = -dy;
+    }
+    x = initialPoint.x;
+    y = initialPoint.y;
+    this.setPixel(new Point(x, y, color));
+    if (dx > dy) {
+      p = 2 * dy - dx;
+      const1 = 2 * dy;
+      const2 = 2 * (dy - dx);
+
+      for (let i = 0; i < dx; i++) {
+        x += xIncr;
+        if (p < 0) {
+          p += const1;
+        } else {
+          p += const2;
+          y += yIncr;
+        }
+        this.setPixel(new Point(x, y, color));
+      }
+    } else {
+      p = 2 * dx - dy;
+      const1 = 2 * dx;
+      const2 = 2 * (dx - dy);
+      for (let i = 0; i < dy; i++) {
+        y += yIncr;
+        if (p < 0) {
+          p += const1;
+        } else {
+          p += const2;
+          x += xIncr;
+        }
+        this.setPixel(new Point(x, y, color));
+      }
     }
   }
 }
