@@ -125,6 +125,19 @@ export class Paintbrush {
         }
         this.radius = parseInt(raio);
         break;
+      case "translation":
+        const xTranslation = parseInt(
+          prompt("Digite o valor para transladar em X: ") ?? "0"
+        );
+        const yTranslation = parseInt(
+          prompt("Digite o valor para transladar em Y: ") ?? "0"
+        );
+        if (isNaN(xTranslation) || isNaN(yTranslation)) {
+          alert("Erro!");
+          return;
+        }
+        this.translate(xTranslation, yTranslation);
+        break;
 
       default:
         break;
@@ -154,7 +167,7 @@ export class Paintbrush {
         }
       }
       if (element instanceof Circumference) {
-        this.circBresenham(element.centro, element.raio, element.color);
+        this.circBresenham(element.center, element.raio, element.color);
       }
     }
   }
@@ -191,23 +204,8 @@ export class Paintbrush {
   }
 
   cleanScreen() {
-    const imageData = this.ctx.getImageData(
-      0,
-      0,
-      this.canvas.width,
-      this.canvas.height
-    );
-
-    const colors = getRGB("#FFFFFF");
-    for (let index = 0; index < imageData.data.length; index += 4) {
-      //console.log(index);
-      imageData.data[index + 0] = colors[0]; // red
-      imageData.data[index + 1] = colors[1]; // green
-      imageData.data[index + 2] = colors[2]; // blue
-      imageData.data[index + 3] = 255; // transparency
-    }
+    this.resetCanvas();
     this.elements.length = 0;
-    this.ctx.putImageData(imageData, 0, 0);
   }
 
   dda(initialPoint, finalPoint, color) {
@@ -311,5 +309,44 @@ export class Paintbrush {
     this.setPixel(new Point(y + Xcenter, -x + Ycenter, color));
     this.setPixel(new Point(-y + Xcenter, x + Ycenter, color));
     this.setPixel(new Point(-y + Xcenter, -x + Ycenter, color));
+  }
+
+  translate(xTranslation, yTranslation) {
+    this.resetCanvas();
+    for (const element of this.elements) {
+      if (element instanceof Point) {
+        element.x += xTranslation;
+        element.y += yTranslation;
+      }
+      if (element instanceof Polygon) {
+        for (const vertex of element.vertices) {
+          vertex.x += xTranslation;
+          vertex.y += yTranslation;
+        }
+      }
+      if (element instanceof Circumference) {
+        element.center.x += xTranslation;
+        element.center.y += yTranslation;
+      }
+    }
+    this.render();
+  }
+  resetCanvas() {
+    const imageData = this.ctx.getImageData(
+      0,
+      0,
+      this.canvas.width,
+      this.canvas.height
+    );
+
+    const colors = getRGB("#FFFFFF");
+    for (let index = 0; index < imageData.data.length; index += 4) {
+      //console.log(index);
+      imageData.data[index + 0] = colors[0]; // red
+      imageData.data[index + 1] = colors[1]; // green
+      imageData.data[index + 2] = colors[2]; // blue
+      imageData.data[index + 3] = 255; // transparency
+    }
+    this.ctx.putImageData(imageData, 0, 0);
   }
 }
