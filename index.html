@@ -7,13 +7,15 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <form>
-      <fieldset>
-        <legend>Selecione a ferramenta:</legend>
+    <fieldset>
+      <legend>Selecione a ferramenta:</legend>
+      <form id="color-form">
         <div class="color-picker">
           <input type="color" id="color" name="color" value="#000000" />
           <label for="color">Cor</label>
         </div>
+      </form>
+      <form id="mode-form">
         <div>
           <input type="radio" id="point" name="mode" value="point" checked />
           <label for="point">Ponto</label>
@@ -55,8 +57,8 @@
         <div>
           <button id="cleanScreen" type="button">Limpar tela</button>
         </div>
-      </fieldset>
-    </form>
+      </form>
+    </fieldset>
     <canvas></canvas>
     <script src="src/main.js" type="module"></script>
   </body>

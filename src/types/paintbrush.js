@@ -383,9 +383,7 @@ export class Paintbrush {
   }
 
   rotate(angle) {
-    console.log(angle);
     this.resetCanvas();
-
     for (const element of this.elements) {
       if (element instanceof Point) {
         const originalX = element.x;
@@ -397,8 +395,6 @@ export class Paintbrush {
         element.y = Math.floor(
           originalX * Math.sin(angle) + originalY * Math.cos(angle)
         );
-
-        console.log([element.x, element.y]);
       }
 
       if (element instanceof Polygon) {
