@@ -1,4 +1,4 @@
-import { getRGB, toIndex } from "../functions.js";
+import { getRGB, toIndex, toRadians } from "../functions.js";
 import { Circumference } from "./circumference.js";
 import { Point } from "./point.js";
 import { Polygon } from "./polygon.js";
@@ -154,6 +154,18 @@ export class Paintbrush {
           return;
         }
         this.escale(xScale, yScale);
+        break;
+      case "rotation":
+        const degree = parseInt(
+          prompt("Digite o valor em graus para rotacionar.") ?? "0"
+        );
+
+        if (isNaN(degree)) {
+          alert("Erro!");
+          return;
+        }
+
+        this.rotate(toRadians(degree % 360));
         break;
 
       default:
@@ -365,6 +377,43 @@ export class Paintbrush {
         element.center.x = Math.floor(element.center.x * xScale);
         element.center.y = Math.floor(element.center.y * yScale);
         element.raio = Math.floor(element.raio * xScale);
+      }
+    }
+    this.render();
+  }
+
+  rotate(degree) {
+    console.log(degree);
+    this.resetCanvas();
+    for (const element of this.elements) {
+      if (element instanceof Point) {
+        element.x = Math.trunc(
+          element.x * Math.cos(degree) - element.y * Math.sin(degree)
+        );
+        element.y = Math.trunc(
+          element.x * Math.sin(degree) + element.y * Math.cos(degree)
+        );
+        console.log([element.x, element.y]);
+      }
+      if (element instanceof Polygon) {
+        for (const vertex of element.vertices) {
+          vertex.x = Math.trunc(
+            vertex.x * Math.cos(degree) - vertex.y * Math.sin(degree)
+          );
+          vertex.y = Math.trunc(
+            vertex.x * Math.sin(degree) + vertex.y * Math.cos(degree)
+          );
+        }
+      }
+      if (element instanceof Circumference) {
+        element.center.x = Math.trunc(
+          element.center.x * Math.cos(degree) -
+            element.center.y * Math.sin(degree)
+        );
+        element.center.y = Math.trunc(
+          element.center.x * Math.sin(degree) +
+            element.center.y * Math.cos(degree)
+        );
       }
     }
     this.render();

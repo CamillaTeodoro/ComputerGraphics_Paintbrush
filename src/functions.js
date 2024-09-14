@@ -17,3 +17,6 @@ export function fromIndex(i, width) {
   i = i / 4;
   return new Point(i % width, (i / width) | 0);
 }
+export function toRadians(angle) {
+  return angle * (Math.PI / 180);
+}
