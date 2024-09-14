@@ -1,4 +1,5 @@
 import { getRGB, toIndex } from "../functions.js";
+import { Circumference } from "./circumference.js";
 import { Point } from "./point.js";
 import { Polygon } from "./polygon.js";
 
@@ -14,14 +15,15 @@ export class Paintbrush {
     });
     if (!ctx) throw new Error("Missing context");
     this.ctx = ctx;
-    this.canvas.width = 100;
-    this.canvas.height = 100;
+    this.canvas.width = 200;
+    this.canvas.height = 200;
     this.mode = "point";
     this.color = "#000000";
     this.elements = [];
     this.clicksPerMode = 0;
     this.alg = "DDA";
     this.polygonSize = 3;
+    this.radius = 1;
     //this.currentPosition = new Point(0, 0);
     this.canvas.addEventListener("click", this.click.bind(this));
   }
@@ -43,6 +45,9 @@ export class Paintbrush {
         break;
       case "polygon":
         this.polygon(convertedPoint);
+        break;
+      case "circumference":
+        this.circumference(convertedPoint);
         break;
       default:
         break;
@@ -91,6 +96,11 @@ export class Paintbrush {
       this.render();
     }
   }
+  circumference(point) {
+    const circ = new Circumference(point, this.radius, this.color);
+    this.elements.push(circ);
+    this.render();
+  }
   setMode(mode) {
     if (mode != this.mode) this.clicksPerMode = 0;
     this.mode = mode;
@@ -106,6 +116,14 @@ export class Paintbrush {
         }
         this.polygonSize = parseInt(size);
         this.alg = this.getAlg();
+        break;
+      case "circumference":
+        const raio = prompt("Digite o raio da circunferência: ");
+        if (!raio) {
+          alert("Erro!");
+          return;
+        }
+        this.radius = parseInt(raio);
         break;
 
       default:
@@ -134,6 +152,9 @@ export class Paintbrush {
             alert("Algoritmo inválido!");
           }
         }
+      }
+      if (element instanceof Circumference) {
+        this.circBresenham(element.centro, element.raio, element.color);
       }
     }
   }
@@ -262,5 +283,33 @@ export class Paintbrush {
         this.setPixel(new Point(x, y, color));
       }
     }
+  }
+
+  circBresenham(center, radius, color) {
+    let x = 0;
+    let y = radius;
+    let p = 3 - 2 * radius;
+    this.plotaSimetricos(x, y, center.x, center.y, color);
+    while (x < y) {
+      if (p < 0) {
+        p += 4 * x + 6;
+      } else {
+        p += 4 * (x - y) + 10;
+        y--;
+      }
+      x++;
+      this.plotaSimetricos(x, y, center.x, center.y, color);
+    }
+  }
+
+  plotaSimetricos(x, y, Xcenter, Ycenter, color) {
+    this.setPixel(new Point(x + Xcenter, y + Ycenter, color));
+    this.setPixel(new Point(x + Xcenter, -y + Ycenter, color));
+    this.setPixel(new Point(-x + Xcenter, y + Ycenter, color));
+    this.setPixel(new Point(-x + Xcenter, -y + Ycenter, color));
+    this.setPixel(new Point(y + Xcenter, x + Ycenter, color));
+    this.setPixel(new Point(y + Xcenter, -x + Ycenter, color));
+    this.setPixel(new Point(-y + Xcenter, x + Ycenter, color));
+    this.setPixel(new Point(-y + Xcenter, -x + Ycenter, color));
   }
 }

@@ -9,11 +9,11 @@
   <body>
     <form>
       <fieldset>
-        <div>
+        <legend>Selecione a ferramenta:</legend>
+        <div class="color-picker">
           <input type="color" id="color" name="color" value="#000000" />
           <label for="color">Cor</label>
         </div>
-        <legend>Selecione a ferramenta:</legend>
         <div>
           <input type="radio" id="point" name="mode" value="point" checked />
           <label for="point">Ponto</label>
@@ -25,6 +25,15 @@
         <div>
           <input type="radio" id="polygon" name="mode" value="polygon" />
           <label for="polygon">Polígono</label>
+        </div>
+        <div>
+          <input
+            type="radio"
+            id="circumference"
+            name="mode"
+            value="circumference"
+          />
+          <label for="circumference">Circunferênia</label>
         </div>
         <div>
           <button id="cleanScreen" type="button">Limpar tela</button>
