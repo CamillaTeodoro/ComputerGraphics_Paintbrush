@@ -153,19 +153,39 @@ export class Paintbrush {
           alert("Erro!");
           return;
         }
-        this.escale(xScale, yScale);
+        this.scale(xScale, yScale);
         break;
       case "rotation":
         const angle = parseInt(
           prompt("Digite o valor em graus para rotacionar.") ?? "0"
         );
-
         if (isNaN(angle)) {
           alert("Erro!");
           return;
         }
-
         this.rotate(toRadians(angle % 360));
+        break;
+      case "mirror":
+        const xMirror = parseInt(
+          prompt(
+            "Deseja espelhar em relação a X? Digite 1 para SIM e 0 para NÃO."
+          ) ?? "0"
+        );
+        const yMirror = parseInt(
+          prompt(
+            "Deseja espelhar em relação a Y? Digite 1 para SIM e 0 para NÃO."
+          ) ?? "0"
+        );
+        if (
+          isNaN(xMirror) ||
+          isNaN(yMirror) ||
+          (xMirror != 1 && xMirror != 0) ||
+          (yMirror != 1 && yMirror != 0)
+        ) {
+          alert("Erro!");
+          return;
+        }
+        this.mirror(xMirror, yMirror);
         break;
 
       default:
@@ -377,7 +397,7 @@ export class Paintbrush {
     }
     this.render();
   }
-  escale(xScale, yScale) {
+  scale(xScale, yScale) {
     this.resetCanvas();
     for (const element of this.elements) {
       if (element instanceof Point) {
@@ -398,7 +418,38 @@ export class Paintbrush {
     }
     this.render();
   }
-
+  mirror(xMirror, yMirror) {
+    this.resetCanvas();
+    for (const element of this.elements) {
+      if (element instanceof Point) {
+        if (xMirror === 1) {
+          element.x = -element.x;
+        }
+        if (yMirror === 1) {
+          element.y = -element.y;
+        }
+      }
+      if (element instanceof Polygon) {
+        for (const vertex of element.vertices) {
+          if (xMirror === 1) {
+            vertex.x = -vertex.x;
+          }
+          if (yMirror === 1) {
+            vertex.y = -vertex.y;
+          }
+        }
+      }
+      if (element instanceof Circumference) {
+        if (xMirror === 1) {
+          element.center.x = -element.center.x;
+        }
+        if (yMirror === 1) {
+          element.center.y = -element.center.y;
+        }
+      }
+    }
+    this.render();
+  }
   rotate(angle) {
     this.resetCanvas();
     for (const element of this.elements) {
