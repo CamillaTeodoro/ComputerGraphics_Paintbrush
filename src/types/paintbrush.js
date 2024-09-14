@@ -156,16 +156,16 @@ export class Paintbrush {
         this.escale(xScale, yScale);
         break;
       case "rotation":
-        const degree = parseInt(
+        const angle = parseInt(
           prompt("Digite o valor em graus para rotacionar.") ?? "0"
         );
 
-        if (isNaN(degree)) {
+        if (isNaN(angle)) {
           alert("Erro!");
           return;
         }
 
-        this.rotate(toRadians(degree % 360));
+        this.rotate(toRadians(angle % 360));
         break;
 
       default:
@@ -382,40 +382,52 @@ export class Paintbrush {
     this.render();
   }
 
-  rotate(degree) {
-    console.log(degree);
+  rotate(angle) {
+    console.log(angle);
     this.resetCanvas();
+
     for (const element of this.elements) {
       if (element instanceof Point) {
-        element.x = Math.trunc(
-          element.x * Math.cos(degree) - element.y * Math.sin(degree)
+        const originalX = element.x;
+        const originalY = element.y;
+
+        element.x = Math.floor(
+          originalX * Math.cos(angle) - originalY * Math.sin(angle)
         );
-        element.y = Math.trunc(
-          element.x * Math.sin(degree) + element.y * Math.cos(degree)
+        element.y = Math.floor(
+          originalX * Math.sin(angle) + originalY * Math.cos(angle)
         );
+
         console.log([element.x, element.y]);
       }
+
       if (element instanceof Polygon) {
         for (const vertex of element.vertices) {
-          vertex.x = Math.trunc(
-            vertex.x * Math.cos(degree) - vertex.y * Math.sin(degree)
+          const originalX = vertex.x;
+          const originalY = vertex.y;
+
+          vertex.x = Math.floor(
+            originalX * Math.cos(angle) - originalY * Math.sin(angle)
           );
-          vertex.y = Math.trunc(
-            vertex.x * Math.sin(degree) + vertex.y * Math.cos(degree)
+          vertex.y = Math.floor(
+            originalX * Math.sin(angle) + originalY * Math.cos(angle)
           );
         }
       }
+
       if (element instanceof Circumference) {
-        element.center.x = Math.trunc(
-          element.center.x * Math.cos(degree) -
-            element.center.y * Math.sin(degree)
+        const originalCenterX = element.center.x;
+        const originalCenterY = element.center.y;
+
+        element.center.x = Math.floor(
+          originalCenterX * Math.cos(angle) - originalCenterY * Math.sin(angle)
         );
-        element.center.y = Math.trunc(
-          element.center.x * Math.sin(degree) +
-            element.center.y * Math.cos(degree)
+        element.center.y = Math.floor(
+          originalCenterX * Math.sin(angle) + originalCenterY * Math.cos(angle)
         );
       }
     }
+
     this.render();
   }
   resetCanvas() {
