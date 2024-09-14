@@ -2,6 +2,7 @@ canvas {
   width: 100vmin;
   height: 100vmin;
   image-rendering: pixelated;
+  border: 2px solid black;
 }
 
 button {

@@ -210,7 +210,19 @@ export class Paintbrush {
     const xCanvas = Math.floor((canvasWidth * x) / canvasScreenWidth);
     const yCanvas = Math.floor((canvasHeight * y) / canvasScreenHeight);
 
-    return new Point(xCanvas, yCanvas, this.color);
+    return this.translatePoint(
+      new Point(xCanvas, yCanvas, this.color),
+      -canvasWidth / 2,
+      -canvasHeight / 2
+    );
+  }
+
+  translatePoint(point, xTranslation, yTranslation) {
+    return new Point(
+      point.x + xTranslation,
+      point.y + yTranslation,
+      point.color
+    );
   }
 
   setPixel(point) {
@@ -221,7 +233,12 @@ export class Paintbrush {
       this.canvas.height
     );
 
-    const index = toIndex(point, imageData.width);
+    const result = this.translatePoint(
+      point,
+      this.canvas.width / 2,
+      this.canvas.height / 2
+    );
+    const index = toIndex(result, imageData.width);
     const colors = getRGB(point.color);
 
     imageData.data[index + 0] = colors[0]; // red
