@@ -20,17 +20,25 @@ export class Paintbrush {
     this.mode = "point";
     this.color = "#000000";
     this.elements = [];
+    this.windowVertices = [];
     this.clicksPerMode = 0;
     this.alg = "DDA";
     this.polygonSize = 3;
     this.radius = 1;
+    this.xMax = 0;
+    this.xMin = 0;
+    this.yMax = 0;
+    this.yMin = 0;
     //this.currentPosition = new Point(0, 0);
     this.canvas.addEventListener("click", this.click.bind(this));
   }
 
   /**
    *
-   * @param {MouseEvent} event
+   * @param {{
+   *   offsetX: number
+   *   offsetY: number
+   * }} event
    */
   click(event) {
     const convertedPoint = this.convertPosition(event.offsetX, event.offsetY);
@@ -48,6 +56,9 @@ export class Paintbrush {
         break;
       case "circumference":
         this.circumference(convertedPoint);
+        break;
+      case "cohenSutherlandWindow":
+        this.cohenSutherlandWindow(convertedPoint);
         break;
       default:
         break;
@@ -101,6 +112,33 @@ export class Paintbrush {
     this.elements.push(circ);
     this.render();
   }
+  cohenSutherlandWindow(point) {
+    if (this.clicksPerMode === 1) {
+      this.windowVertices.length = 0;
+      this.windowVertices.push(point);
+    }
+    if (this.clicksPerMode === 2) {
+      this.windowVertices.push(point);
+      this.clicksPerMode = 0;
+      if (this.windowVertices[0].x > this.windowVertices[1].x) {
+        this.xMax = this.windowVertices[0].x;
+        this.xMin = this.windowVertices[1].x;
+      } else {
+        this.xMax = this.windowVertices[1].x;
+        this.xMin = this.windowVertices[0].x;
+      }
+      if (this.windowVertices[0].y > this.windowVertices[1].y) {
+        this.yMax = this.windowVertices[0].y;
+        this.yMin = this.windowVertices[1].y;
+      } else {
+        this.yMax = this.windowVertices[1].y;
+        this.yMin = this.windowVertices[0].y;
+      }
+
+      this.cohenSutherlandAlg();
+    }
+  }
+
   setMode(mode) {
     if (mode != this.mode) this.clicksPerMode = 0;
     this.mode = mode;
@@ -219,6 +257,102 @@ export class Paintbrush {
         this.circBresenham(element.center, element.raio, element.color);
       }
     }
+  }
+
+  cohenSutherlandAlg() {
+    this.resetCanvas();
+    const p = new Polygon("DDA", "#000000");
+    p.addVertex(new Point(this.xMin, this.yMin, this.color));
+    p.addVertex(new Point(this.xMax, this.yMin, this.color));
+    p.addVertex(new Point(this.xMax, this.yMax, this.color));
+    p.addVertex(new Point(this.xMin, this.yMax, this.color));
+    const oldElements = this.elements;
+    this.elements = [p];
+    this.render();
+    this.elements = oldElements;
+    for (const element of this.elements) {
+      if (!(element instanceof Polygon)) continue;
+      if (element.vertices.length != 2) continue;
+      this.cohen(
+        element.vertices[0].x,
+        element.vertices[0].y,
+        element.vertices[1].x,
+        element.vertices[1].y,
+        element.color
+      );
+    }
+  }
+  // bottom e top estão trocados
+  cohen(x1, y1, x2, y2, color) {
+    let c1, c2, cOut, xInt, yInt;
+    let accept = false;
+    let done = false;
+    while (!done) {
+      c1 = this.computeCode(x1, y1);
+      c2 = this.computeCode(x2, y2);
+      if (c1 === 0 && c2 === 0) {
+        accept = true;
+        done = true;
+      } else if (c1 & c2) {
+        done = true;
+      } else {
+        if (c1 != 0) {
+          cOut = c1;
+        } else {
+          cOut = c2;
+        }
+        if (cOut & 1) {
+          // LEFT
+          xInt = this.xMin;
+          yInt = y1 + ((y2 - y1) * (this.xMin - x1)) / (x2 - x1);
+        } else if (cOut & 2) {
+          // RIGHT
+          xInt = this.xMax;
+          yInt = y1 + (y2 - y1) * ((this.xMax - x1) / (x2 - x1));
+        } else if (cOut & 8) {
+          // BOTTOM
+          yInt = this.yMin;
+          xInt = x1 + (x2 - x1) * ((this.yMin - y1) / (y2 - y1));
+        } else if (cOut & 4) {
+          // TOP
+          yInt = this.yMax;
+          xInt = x1 + (x2 - x1) * ((this.yMax - y1) / (y2 - y1));
+        }
+        if (cOut === c1) {
+          x1 = xInt;
+          y1 = yInt;
+        } else {
+          x2 = xInt;
+          y2 = yInt;
+        }
+      }
+    }
+    if (accept) {
+      this.dda(
+        new Point(Math.round(x1), Math.round(y1), color),
+        new Point(Math.round(x2), Math.round(y2), color),
+        color
+      );
+    }
+  }
+
+  computeCode(x, y) {
+    let code = 0; // INSIDE
+
+    if (x < this.xMin)
+      // to the left of window
+      code |= 1; // LEFT
+    else if (x > this.xMax)
+      // to the right of window
+      code |= 2; // RIGHT
+    if (y < this.yMin)
+      // above the window
+      code |= 8; // TOP
+    else if (y > this.yMax)
+      // below the window
+      code |= 4; //  BOTTOM
+
+    return code;
   }
 
   convertPosition(x, y) {
@@ -504,7 +638,6 @@ export class Paintbrush {
 
     const colors = getRGB("#FFFFFF");
     for (let index = 0; index < imageData.data.length; index += 4) {
-      //console.log(index);
       imageData.data[index + 0] = colors[0]; // red
       imageData.data[index + 1] = colors[1]; // green
       imageData.data[index + 2] = colors[2]; // blue
