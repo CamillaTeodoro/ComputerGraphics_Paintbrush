@@ -29,6 +29,8 @@ export class Paintbrush {
     this.xMin = 0;
     this.yMax = 0;
     this.yMin = 0;
+    this.u1 = 0;
+    this.u2 = 1;
     //this.currentPosition = new Point(0, 0);
     this.canvas.addEventListener("click", this.click.bind(this));
   }
@@ -59,6 +61,9 @@ export class Paintbrush {
         break;
       case "cohenSutherlandWindow":
         this.cohenSutherlandWindow(convertedPoint);
+        break;
+      case "liangBarskyWindow":
+        this.liangBarskyWindow(convertedPoint);
         break;
       default:
         break;
@@ -112,6 +117,7 @@ export class Paintbrush {
     this.elements.push(circ);
     this.render();
   }
+
   cohenSutherlandWindow(point) {
     if (this.clicksPerMode === 1) {
       this.windowVertices.length = 0;
@@ -136,6 +142,33 @@ export class Paintbrush {
       }
 
       this.cohenSutherlandAlg();
+    }
+  }
+
+  liangBarskyWindow(point) {
+    if (this.clicksPerMode === 1) {
+      this.windowVertices.length = 0;
+      this.windowVertices.push(point);
+    }
+    if (this.clicksPerMode === 2) {
+      this.windowVertices.push(point);
+      this.clicksPerMode = 0;
+      if (this.windowVertices[0].x > this.windowVertices[1].x) {
+        this.xMax = this.windowVertices[0].x;
+        this.xMin = this.windowVertices[1].x;
+      } else {
+        this.xMax = this.windowVertices[1].x;
+        this.xMin = this.windowVertices[0].x;
+      }
+      if (this.windowVertices[0].y > this.windowVertices[1].y) {
+        this.yMax = this.windowVertices[0].y;
+        this.yMin = this.windowVertices[1].y;
+      } else {
+        this.yMax = this.windowVertices[1].y;
+        this.yMin = this.windowVertices[0].y;
+      }
+
+      this.liangBarskyAlg();
     }
   }
 
@@ -259,8 +292,89 @@ export class Paintbrush {
     }
   }
 
+  liangBarskyAlg() {
+    this.resetCanvas();
+
+    //cria uma janela visível somente para ajudar na visualização
+    const p = new Polygon("DDA", "#000000");
+    p.addVertex(new Point(this.xMin, this.yMin, this.color));
+    p.addVertex(new Point(this.xMax, this.yMin, this.color));
+    p.addVertex(new Point(this.xMax, this.yMax, this.color));
+    p.addVertex(new Point(this.xMin, this.yMax, this.color));
+    const oldElements = this.elements;
+    this.elements = [p];
+    this.render();
+    this.elements = oldElements;
+    for (const element of this.elements) {
+      if (!(element instanceof Polygon)) continue;
+      if (element.vertices.length != 2) continue;
+      this.liang(
+        element.vertices[0].x,
+        element.vertices[0].y,
+        element.vertices[1].x,
+        element.vertices[1].y,
+        element.color
+      );
+    }
+  }
+
+  liang(x1, y1, x2, y2, color) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    if (this.cliptest(-dx, x1 - this.xMin)) {
+      if (this.cliptest(dx, this.xMax - x1)) {
+        if (this.cliptest(-dy, y1 - this.yMin)) {
+          if (this.cliptest(dy, this.yMax - y1)) {
+            if (this.u2 < 1) {
+              x2 = x1 + dx * this.u2;
+              y2 = y1 + dy * this.u2;
+            }
+            if (this.u1 > 0) {
+              x1 = x1 + dx * this.u1;
+              y1 = y1 + dy * this.u1;
+            }
+            this.dda(
+              new Point(Math.round(x1), Math.round(y1), color),
+              new Point(Math.round(x2), Math.round(y2), color),
+              color
+            );
+          }
+        }
+      }
+    }
+    this.u1 = 0;
+    this.u2 = 1;
+  }
+
+  cliptest(p, q) {
+    let result = true;
+    let r = 0;
+    if (p < 0) {
+      r = q / p;
+      if (r > this.u2) {
+        result = false;
+      } else {
+        if (r > this.u1) {
+          this.u1 = r;
+        }
+      }
+    } else if (p > 0) {
+      r = q / p;
+      if (r < this.u1) {
+        result = false;
+      } else if (r < this.u2) {
+        this.u2 = r;
+      }
+    } else if (q < 0) {
+      result = false;
+    }
+    return result;
+  }
+
   cohenSutherlandAlg() {
     this.resetCanvas();
+
+    //cria uma janela visível somente para ajudar na visualização
     const p = new Polygon("DDA", "#000000");
     p.addVertex(new Point(this.xMin, this.yMin, this.color));
     p.addVertex(new Point(this.xMax, this.yMin, this.color));
@@ -282,7 +396,7 @@ export class Paintbrush {
       );
     }
   }
-  // bottom e top estão trocados
+  // bottom e top estão trocados em relação à janela original, pois o y cresce para baixo
   cohen(x1, y1, x2, y2, color) {
     let c1, c2, cOut, xInt, yInt;
     let accept = false;
