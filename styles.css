@@ -2,11 +2,11 @@ canvas {
   width: 100vmin;
   height: 100vmin;
   image-rendering: pixelated;
-  border: 2px solid black;
+  border: 1px solid black;
 }
 
 button {
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .color-picker {

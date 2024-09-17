@@ -13,6 +13,9 @@ function main() {
   const cleanScreen = document.querySelector("#cleanScreen");
   if (!cleanScreen) return;
 
+  const resetWindow = document.querySelector("#resetWindow");
+  if (!resetWindow) return;
+
   const paint = new Paintbrush(canvas);
 
   modeForm.addEventListener("change", () => {
@@ -26,6 +29,11 @@ function main() {
 
   cleanScreen.addEventListener("click", () => {
     paint.cleanScreen();
+  });
+
+  resetWindow.addEventListener("click", () => {
+    paint.resetCanvas();
+    paint.render();
   });
 }
 main();
