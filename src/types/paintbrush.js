@@ -24,7 +24,6 @@ export class Paintbrush {
     this.clicksPerMode = 0;
     this.alg = "DDA";
     this.polygonSize = 3;
-    this.radius = 1;
     this.xMax = 0;
     this.xMin = 0;
     this.yMax = 0;
@@ -113,9 +112,21 @@ export class Paintbrush {
     }
   }
   circumference(point) {
-    const circ = new Circumference(point, this.radius, this.color);
-    this.elements.push(circ);
-    this.render();
+    if (this.clicksPerMode === 1) {
+      const circ = new Circumference(point, 0, this.color);
+      this.elements.push(circ);
+    }
+    if (this.clicksPerMode === 2) {
+      const circ = this.elements[this.elements.length - 1];
+      const r = Math.sqrt(
+        Math.pow(circ.center.x - point.x, 2) +
+          Math.pow(circ.center.y - point.y, 2)
+      );
+      circ.setRadius(Math.floor(r));
+      this.elements.push(circ);
+      this.clicksPerMode = 0;
+      this.render();
+    }
   }
 
   cohenSutherlandWindow(point) {
@@ -189,12 +200,6 @@ export class Paintbrush {
         this.alg = this.getAlg();
         break;
       case "circumference":
-        const raio = prompt("Digite o raio da circunferência: ");
-        if (!raio) {
-          alert("Erro!");
-          return;
-        }
-        this.radius = parseInt(raio);
         break;
       case "translation":
         const xTranslation = parseInt(
@@ -287,7 +292,7 @@ export class Paintbrush {
         }
       }
       if (element instanceof Circumference) {
-        this.circBresenham(element.center, element.raio, element.color);
+        this.circBresenham(element.center, element.radius, element.color);
       }
     }
   }
@@ -661,7 +666,7 @@ export class Paintbrush {
       if (element instanceof Circumference) {
         element.center.x = Math.floor(element.center.x * xScale);
         element.center.y = Math.floor(element.center.y * yScale);
-        element.raio = Math.floor(element.raio * xScale);
+        element.radius = Math.floor(element.radius * xScale);
       }
     }
     this.render();

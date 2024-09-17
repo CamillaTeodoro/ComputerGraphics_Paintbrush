@@ -1,7 +1,11 @@
 export class Circumference {
-  constructor(center, raio, color) {
+  constructor(center, radius, color) {
     this.center = center;
-    this.raio = raio;
+    this.radius = radius;
     this.color = color;
+  }
+
+  setRadius(radius) {
+    this.radius = radius;
   }
 }
