@@ -522,11 +522,6 @@ export class Paintbrush {
     this.ctx.putImageData(imageData, 0, 0);
   }
 
-  cleanScreen() {
-    this.resetCanvas();
-    this.elements.length = 0;
-  }
-
   dda(initialPoint, finalPoint, color) {
     const dx = finalPoint.x - initialPoint.x;
     const dy = finalPoint.y - initialPoint.y;
@@ -630,6 +625,13 @@ export class Paintbrush {
     this.setPixel(new Point(-y + Xcenter, -x + Ycenter, color));
   }
 
+  // TRANSFORMADAS
+  /**
+   * Faz a translação de toda a estrutura de dados
+   * Apaga o canvas e redesenha na tela
+   * @param {number} xTranslation
+   * @param {number} yTranslation
+   */
   translate(xTranslation, yTranslation) {
     this.resetCanvas();
     for (const element of this.elements) {
@@ -650,6 +652,13 @@ export class Paintbrush {
     }
     this.render();
   }
+  /**
+   * Faz a escala de toda a estrutura de dados
+   * Valores entre 0 e 1, reduz.
+   * Valores maiores que 1, aumenta.
+   * @param {number} xScale
+   * @param {number} yScale
+   */
   scale(xScale, yScale) {
     this.resetCanvas();
     for (const element of this.elements) {
@@ -671,6 +680,15 @@ export class Paintbrush {
     }
     this.render();
   }
+
+  /**
+   * Faz o espelhamento de toda estrutura de dados
+   * Espelhamento pode ser em referência a X , Y ou X e Y.
+   * Recebe 1 quando deseja espelhar no eixo específico.
+   * Recebe 0 quando o eixo específicado não será espelhado.
+   * @param {number} xMirror
+   * @param {number} yMirror
+   */
   mirror(xMirror, yMirror) {
     this.resetCanvas();
     for (const element of this.elements) {
@@ -703,6 +721,11 @@ export class Paintbrush {
     }
     this.render();
   }
+
+  /**
+   * Rotaciona todos os elementos da estrutura de dados conforme grau informado.
+   * @param {number} angle
+   */
   rotate(angle) {
     this.resetCanvas();
     for (const element of this.elements) {
@@ -747,6 +770,11 @@ export class Paintbrush {
 
     this.render();
   }
+
+  // FUNÇÕES AUXILIARES
+  /**
+   * Limpa o canvas sem apagar a estrutura de dados
+   */
   resetCanvas() {
     const imageData = this.ctx.getImageData(
       0,
@@ -763,5 +791,12 @@ export class Paintbrush {
       imageData.data[index + 3] = 255; // transparency
     }
     this.ctx.putImageData(imageData, 0, 0);
+  }
+  /**
+   * Limpa o canvas e apaga a estrutura de dados
+   */
+  cleanScreen() {
+    this.resetCanvas();
+    this.elements.length = 0;
   }
 }
