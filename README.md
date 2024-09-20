@@ -27,7 +27,18 @@ Acesse a pasta do projeto:
 cd ComputerGraphics_Paintbrush
 ```
 
-Abra o arquivo index.html no seu navegador.
+Rode:
+```
+npm install
+```
+```
+npm start
+```
+
+No browser acesse:
+```
+http://127.0.0.1:8080/
+```
 
 Se estiver utilizando o VSCode, instale a extensão **Live Server** e clique em **Go Live** no canto inferior direito.
 

@@ -1,0 +1,21 @@
+{
+  "name": "computergraphics_paintbrush",
+  "version": "1.0.0",
+  "description": "Projeto desenvolvido para a disciplina de Computação Gráfica da PUC Minas.",
+  "scripts": {
+    "start": "http-server . -p=8080"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CamillaTeodoro/ComputerGraphics_Paintbrush.git"
+  },
+  "author": "camillateodoro@hotmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CamillaTeodoro/ComputerGraphics_Paintbrush/issues"
+  },
+  "homepage": "https://github.com/CamillaTeodoro/ComputerGraphics_Paintbrush#readme",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}
