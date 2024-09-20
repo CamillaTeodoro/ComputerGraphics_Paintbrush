@@ -123,7 +123,6 @@ export class Paintbrush {
           Math.pow(circ.center.y - point.y, 2)
       );
       circ.setRadius(Math.floor(r));
-      this.elements.push(circ);
       this.clicksPerMode = 0;
       this.render();
     }
