@@ -15,76 +15,83 @@
           <label for="color">Cor</label>
         </div>
       </form>
-      <form id="mode-form">
-        <div>
-          <input type="radio" id="point" name="mode" value="point" checked />
-          <label for="point">Ponto</label>
+      <form id="mode-form" class="form-layout">
+        <div class="layout">
+          <h3>Desenhar</h3>
+          <div>
+            <input type="radio" id="point" name="mode" value="point" checked />
+            <label for="point">Ponto</label>
+          </div>
+          <div>
+            <input type="radio" id="line" name="mode" value="line" />
+            <label for="line">Reta</label>
+          </div>
+          <div>
+            <input type="radio" id="polygon" name="mode" value="polygon" />
+            <label for="polygon">Polígono</label>
+          </div>
+          <div>
+            <input
+              type="radio"
+              id="circumference"
+              name="mode"
+              value="circumference"
+            />
+            <label for="circumference">Circunferênia</label>
+          </div>
         </div>
-        <div>
-          <input type="radio" id="line" name="mode" value="line" />
-          <label for="line">Reta</label>
+        <div class="layout">
+          <h3>Transformadas</h3>
+          <div>
+            <input
+              type="radio"
+              id="translation"
+              name="mode"
+              value="translation"
+            />
+            <label for="translation">Translação</label>
+          </div>
+          <div>
+            <input type="radio" id="scale" name="mode" value="scale" />
+            <label for="scale">Escala</label>
+          </div>
+          <div>
+            <input type="radio" id="rotation" name="mode" value="rotation" />
+            <label for="rotation">Rotação</label>
+          </div>
+          <div>
+            <input type="radio" id="mirror" name="mode" value="mirror" />
+            <label for="mirror">Espelhamento</label>
+          </div>
         </div>
-        <div>
-          <input type="radio" id="polygon" name="mode" value="polygon" />
-          <label for="polygon">Polígono</label>
+        <div class="layout">
+          <h3>Janela de Visualização</h3>
+          <div>
+            <input
+              type="radio"
+              id="cohenSutherlandWindow"
+              name="mode"
+              value="cohenSutherlandWindow"
+            />
+            <label for="cohenSutherlandWindow">Usando Cohen-Sutherland</label>
+          </div>
+          <div>
+            <input
+              type="radio"
+              id="liangBarskyWindow"
+              name="mode"
+              value="liangBarskyWindow"
+            />
+            <label for="liangBarskyWindow">Usando Liang-Barsky</label>
+          </div>
         </div>
-        <div>
-          <input
-            type="radio"
-            id="circumference"
-            name="mode"
-            value="circumference"
-          />
-          <label for="circumference">Circunferênia</label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            id="translation"
-            name="mode"
-            value="translation"
-          />
-          <label for="translation">Translação</label>
-        </div>
-        <div>
-          <input type="radio" id="scale" name="mode" value="scale" />
-          <label for="scale">Escala</label>
-        </div>
-        <div>
-          <input type="radio" id="rotation" name="mode" value="rotation" />
-          <label for="rotation">Rotação</label>
-        </div>
-        <div>
-          <input type="radio" id="mirror" name="mode" value="mirror" />
-          <label for="mirror">Espelhamento</label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            id="cohenSutherlandWindow"
-            name="mode"
-            value="cohenSutherlandWindow"
-          />
-          <label for="cohenSutherlandWindow"
-            >Janela de Visualização usando Cohen-Sutherland</label
-          >
-        </div>
-        <div>
-          <input
-            type="radio"
-            id="liangBarskyWindow"
-            name="mode"
-            value="liangBarskyWindow"
-          />
-          <label for="liangBarskyWindow"
-            >Janela de Visualização usando Liang-Barsky</label
-          >
-        </div>
-        <div>
-          <button id="cleanScreen" type="button">Limpar tela</button>
-        </div>
-        <div>
-          <button id="resetWindow" type="button">Reset Janela</button>
+        <div class="button-area">
+          <div>
+            <button id="cleanScreen" type="button">Limpar tela</button>
+          </div>
+          <div>
+            <button id="resetWindow" type="button">Reset Janela</button>
+          </div>
         </div>
       </form>
     </fieldset>

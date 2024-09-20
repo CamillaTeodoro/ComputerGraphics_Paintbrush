@@ -7,9 +7,32 @@ canvas {
 
 button {
   margin-top: 12px;
+  margin-bottom: 12px;
+  padding: 8px;
+  background-color: orange;
+  border-radius: 8px;
+  border: 1px solid orange;
 }
 
 .color-picker {
   margin-bottom: 16px;
   margin-top: 8px;
+}
+
+.form-layout {
+  display: flex;
+  flex-direction: row;
+  margin: 0 20px 20px 20px;
+}
+
+.layout {
+  margin-right: 60px;
+}
+
+.button-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-left: 50px;
 }
