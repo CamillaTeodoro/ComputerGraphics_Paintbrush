@@ -15,7 +15,7 @@ export class Paintbrush {
     });
     if (!ctx) throw new Error("Missing context");
     this.ctx = ctx;
-    this.canvas.width = 300;
+    this.canvas.width = 200;
     this.canvas.height = 200;
     this.mode = "point";
     this.color = "#000000";

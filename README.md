@@ -4,6 +4,8 @@ Projeto desenvolvido para a disciplina de Computação Gráfica da PUC Minas.
 
 Foi desenvolvido um modelo de Paintbrush com a possibilidade de se desenhar retas, poligonos, circunferências, além de permitir rotacionar, transladar, escalara e refletir os objetos.
 
+Para que as transformadas possam ser melhor visualizadas, o ponto (0,0) foi posicionado no centro do canvas.
+
 ## Demonstração
 
 Acesse o projeto em: Link para o Github Pages
@@ -66,8 +68,32 @@ A escolha da opção é feita através de radio-buttons.
 ### Polígono
 - Escolha a cor.
 - Digite o número de lados do polígono.
-- Escolha se deseja utilizar o algoritmo de DDA ou Bresenham para traçar as retas.
+- Escolha se deseja utilizar o algoritmo de DDA ou Bresenham para traçar os lados do polígono.
 - Clique na tela nos pontos que serão vértices do polígono.
+
+### Translação
+ - Digite o valor para transladar em X e em Y.
+ - Valores podem ser positivos e negativos.
+
+### Escala
+ - Digite o valor para aumentar ou diminuir em X e em Y.
+ - Valores entre 0 e 1 diminuem e maiores que 1 aumentam.
+
+### Rotação
+ - Digite o angulo em graus para rotacionar.
+
+### Espelhamento
+ - Digite 1 para espelhar em relação à X, Y ou à X e Y.
+
+### Janelas de Visualização
+ - Tanto para o algoritmo de Cohen-Sutherland quanto o de Liang-Barsky, basta selecionar os dois pontos na tela que formarão a janela de visualização.
+ - Somente retas serão mostradas na janela, sendo pontos e circunferências ignorados.
+
+### Limpar tela
+- Apaga os objetos da tela e limpa a estrutura de dados.
+
+### Reset janela
+- Remove a janela e redesenha todos os objetos salvos na estrutura de dados.
 
 
 ## Como contribuir
