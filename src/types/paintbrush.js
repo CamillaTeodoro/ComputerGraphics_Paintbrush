@@ -3,20 +3,27 @@ import { Circumference } from "./circumference.js";
 import { Point } from "./point.js";
 import { Polygon } from "./polygon.js";
 
+const CANVAS_SCALE = 0.2;
+
 export class Paintbrush {
   /**
    *
-   * @param {HTMLCanvasElement} canvas
+   * @param {HTMLDivElement} divCanvas
    */
-  constructor(canvas) {
-    this.canvas = canvas;
-    const ctx = canvas.getContext("2d", {
+  constructor(divCanvas) {
+    /** @type {HTMLCanvasElement} */
+    this.canvas = document.createElement("canvas");
+    const containerSize = divCanvas.getBoundingClientRect();
+    this.canvas.width = Math.floor(containerSize.width * CANVAS_SCALE);
+    this.canvas.height = Math.floor(containerSize.height * CANVAS_SCALE);
+
+    divCanvas.appendChild(this.canvas);
+    const ctx = this.canvas.getContext("2d", {
       willReadFrequently: true,
     });
     if (!ctx) throw new Error("Missing context");
     this.ctx = ctx;
-    this.canvas.width = 300;
-    this.canvas.height = 300;
+
     this.mode = "point";
     this.color = "#000000";
     this.elements = [];
@@ -491,34 +498,10 @@ export class Paintbrush {
 
   translatePoint(point, xTranslation, yTranslation) {
     return new Point(
-      point.x + xTranslation,
-      point.y + yTranslation,
+      Math.floor(point.x + xTranslation),
+      Math.floor(point.y + yTranslation),
       point.color
     );
-  }
-
-  setPixel(point) {
-    const imageData = this.ctx.getImageData(
-      0,
-      0,
-      this.canvas.width,
-      this.canvas.height
-    );
-
-    const result = this.translatePoint(
-      point,
-      this.canvas.width / 2,
-      this.canvas.height / 2
-    );
-    const index = toIndex(result, imageData.width);
-    const colors = getRGB(point.color);
-
-    imageData.data[index + 0] = colors[0]; // red
-    imageData.data[index + 1] = colors[1]; // green
-    imageData.data[index + 2] = colors[2]; // blue
-    imageData.data[index + 3] = 255; // transparency
-
-    this.ctx.putImageData(imageData, 0, 0);
   }
 
   dda(initialPoint, finalPoint, color) {
@@ -797,5 +780,29 @@ export class Paintbrush {
   cleanScreen() {
     this.resetCanvas();
     this.elements.length = 0;
+  }
+
+  setPixel(point) {
+    const imageData = this.ctx.getImageData(
+      0,
+      0,
+      this.canvas.width,
+      this.canvas.height
+    );
+
+    const result = this.translatePoint(
+      point,
+      this.canvas.width / 2,
+      this.canvas.height / 2
+    );
+    const index = toIndex(result, imageData.width);
+    const colors = getRGB(point.color);
+
+    imageData.data[index + 0] = colors[0]; // red
+    imageData.data[index + 1] = colors[1]; // green
+    imageData.data[index + 2] = colors[2]; // blue
+    imageData.data[index + 3] = 255; // transparency
+
+    this.ctx.putImageData(imageData, 0, 0);
   }
 }

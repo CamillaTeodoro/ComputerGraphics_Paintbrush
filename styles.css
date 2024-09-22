@@ -11,10 +11,16 @@ body {
 }
 
 canvas {
-  margin: 16px;
   image-rendering: pixelated;
   border: 1px solid black;
   background-color: #ffffff;
+  width: 100%;
+  height: 100%;
+}
+
+div#canvas {
+  margin: 16px;
+  height: 100%;
 }
 
 fieldset {

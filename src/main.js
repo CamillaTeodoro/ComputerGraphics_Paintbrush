@@ -1,7 +1,8 @@
 import { Paintbrush } from "./types/paintbrush.js";
 
 function main() {
-  const canvas = document.querySelector("canvas");
+  /**@type {HTMLDivElement | null} */
+  const canvas = document.querySelector("#canvas");
   if (!canvas) return;
   /**@type {HTMLFormElement | null} */
   const colorForm = document.querySelector("#color-form");
